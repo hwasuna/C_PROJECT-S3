@@ -6,20 +6,18 @@
 #define C_PROJECT_S3_SET_H
 
 
-
 //Cell
 typedef struct s_d_cell
 {
-    int value, nb_levels;
-    struct s_d_cell *next;
-    struct s_d_cell *down_[nb_levels-1];
+    int value;
+    struct s_d_cell* next;
     //struct s_d_cell *down;
 } t_d_cell;
 
 //Level_list
 typedef struct s_d_list
 {
-    t_d_cell *head_[max_level-1];
+    t_d_cell* head;
     int max_level;
 } t_d_list;
 
@@ -62,5 +60,7 @@ void Insert_level_cell(int, t_d_cell);
 //For this last function, it is possible to make a 'simple' insertion at each level, starting
 //from the beginning of the list, but it is possible to be more efficient - it's up to you
 //to work out how.
+
+
 
 #endif //C_PROJECT_S3_SET_H
