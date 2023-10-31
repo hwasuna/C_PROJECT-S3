@@ -1,29 +1,24 @@
 //
 // Created by Hawa Ajroud on 26/10/2023.
 //
+
 #include "set.h"
 
 int main() {
-    t_d_list list = Create_empty_lev_list(5);
-    for(int i =0; i<5; i++)
-    {
-        Display_cells_level(list, i);
-    }
+    t_d_list list = Create_emp_list(5);
 
 
-    Insert_Cell_Head_list(&list,4,18 );
-    Insert_Cell_Head_list(&list,1,25 );
-    Insert_Cell_Head_list(&list,1,31 );
-    Insert_Cell_Head_list(&list,1,32 );
-    Insert_Cell_Head_list(&list,5,56 );
-    Insert_Cell_Head_list(&list,1,25 );
-    Insert_Cell_Head_list(&list,3,8);
-    Insert_Cell_Head_list(&list,1,2 );
 
-    for(int i =0; i<5; i++)
-    {
-        Display_cells_level(list, i);
-    }
+    Insert_Head(&list,3,91);
+    Insert_Head(&list,5,59 );
+    Insert_Head(&list,1,59 );
+    Insert_Head(&list,3,56 );
+    Insert_Head(&list,5,32 );
+    Insert_Head(&list,2,31 );
+    Insert_Head(&list,1,25 );
+    Insert_Head(&list,4,18 );
+
+    Display_all(list);
 
     return 0;
 }
