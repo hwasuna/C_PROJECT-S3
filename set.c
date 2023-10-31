@@ -79,10 +79,10 @@ void Display_level(t_d_list list, int level)
 
 
 //
-//// Display_levels_list_align_cells
-//// param : int level , t_d_list list
+//// Display_align
+//// param :  t_d_list list
 //// output : void
-//void Display_level_align(t_d_list list, int level);
+//void Display_align(t_d_list list);
 
 
 
@@ -113,6 +113,7 @@ void Insert_list(t_d_list* list, int  value, int level)
                 new_cell->next = temp;
                 prev->next = new_cell;
             }
+            break;
         }
     }
     else //problem of level of the inserted cell
