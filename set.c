@@ -85,11 +85,41 @@ void Display_level(t_d_list list, int level)
 //void Display_level_align(t_d_list list, int level);
 
 
+
 // Insert_list
 // param : t_d_list* list, int  value, int level
 // output : void
 // ATTENTION TO THE ORDER OF THE INSERTION = MUST STAY A SORTED LIST
-//void Insert_list(t_d_list* list, int  value, int level)
+void Insert_list(t_d_list* list, int  value, int level)
+{
+    if (level >= 0 && level <= list->max_level) {
+        for (int curr_level = 0; curr_level < level; curr_level++) {
+            t_d_cell* new_cell = Create_cell(value, level);
+
+            t_d_cell* temp = list->head[curr_level];
+            t_d_cell* prev = NULL;
+
+            while (temp != NULL && temp->value <= value) { //loop until the value inserted is bigger than the list's values
+                prev = temp;
+                temp = temp->next;
+            }
+
+            if (prev == NULL) // Insert at the beginning of the list at this level
+            {
+                Insert_Head(list, level, value);
+            }
+            else // Insert after 'prev' and before 'temp'
+            {
+                new_cell->next = temp;
+                prev->next = new_cell;
+            }
+        }
+    }
+    else //problem of level of the inserted cell
+    {
+        printf("The level indicated isn't in the list's range\n");
+    }
+}
 
 // Display_all
 // param : t_d_list list
