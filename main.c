@@ -8,7 +8,6 @@ int main() {
     t_d_list list = Create_emp_list(5);
 
 
-
     Insert_Head(&list,3,91);
     Insert_Head(&list,5,59 );
     Insert_Head(&list,1,59 );

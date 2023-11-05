@@ -122,6 +122,7 @@ void Insert_list(t_d_list* list, int  value, int level)
     }
 }
 
+
 // Display_all
 // param : t_d_list list
 // output : void
