@@ -17,7 +17,7 @@ int main() {
     Insert_Head(&list,2,31 );
     Insert_Head(&list,1,25 );
     Insert_Head(&list,4,18 );
-
+    Insert_list(&list,5,3);
     Insert_list(&list,4,2);
     Display_all(list);
 
