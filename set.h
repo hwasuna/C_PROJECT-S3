@@ -16,7 +16,6 @@ typedef struct s_d_list {
     int max_level;
 } t_d_list;
 
-
 ///////level cells
 // Create_cell
 // param : int value, int level

@@ -7,7 +7,6 @@
 #include <stdio.h>
 #include "stdlib.h"
 
-
 ///////level cells
 // Create_cell
 // param : int value,  int level

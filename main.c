@@ -12,6 +12,7 @@ int main() {
     Insert_list(list,2,7);
     Insert_list(list,2,9 );
     Insert_list(list,4,6 );
+    Insert_list(list,2,9 );
 
 
 
