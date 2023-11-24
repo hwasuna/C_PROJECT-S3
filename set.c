@@ -157,7 +157,7 @@ void Insert_list(t_d_list* list, int value, int levels) {
 
         // Move to the next level
         i--;
-    }
+     }
 }
 
 
