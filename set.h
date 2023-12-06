@@ -52,6 +52,7 @@ void Display_align(t_d_list list);
 // ATTENTION TO THE ORDER OF THE INSERTION = MUST STAY A SORTED LIST
 void Insert_list(t_d_list* list, int value, int levels) ;
 
+
 // Display_all
 // param : t_d_list list
 // output : void
