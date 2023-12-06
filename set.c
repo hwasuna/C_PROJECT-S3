@@ -6,6 +6,7 @@
 #include "set.h"
 #include <stdio.h>
 #include "stdlib.h"
+#include <math.h>
 
 ///////level cells
 // Create_cell
@@ -15,13 +16,25 @@ t_d_cell* Create_cell(int value, int levels) {
     t_d_cell* newCell = (t_d_cell*)malloc(sizeof(t_d_cell));
     newCell->value = value;
     newCell->next = (t_d_cell**)malloc(sizeof(t_d_cell*) * levels);
+    newCell->prec = (t_d_cell**)malloc(sizeof(t_d_cell*) * levels);
 
-    for (int i = 0; i < levels; ++i) {
+    for (int i = 0; i < levels; ++i)
+    {
         newCell->next[i] = NULL;
+        // Set prec pointers to the previous level cells
+        if (i > 0)
+        {
+            newCell->prec[i] = newCell->prec[i - 1];
+        }
+        else
+        {
+            newCell->prec[i] = NULL;
+        }
     }
-
     return newCell;
 }
+
+
 ///////level lists
 // Create_empty_lev_list
 // param : int max_level
@@ -52,6 +65,10 @@ void Insert_Head(t_d_list* list, int value, int levels) {
     for (int i = 0; i < levels; i++) {
         newCell->next[i] = list->head[i];
         list->head[i] = newCell;
+        if (i>0)
+        {
+            newCell->prec[i] = newCell->prec[i-1];
+        }
     }
 }
 
@@ -148,6 +165,7 @@ void Insert_list(t_d_list* list, int value, int levels) {
             // Insert at the beginning
             newCell->next[i] = list->head[i];
             list->head[i] = newCell;
+
         } else {
             // Insert after the last cell at the level with a lower value
             newCell->next[i] = current;
@@ -156,7 +174,7 @@ void Insert_list(t_d_list* list, int value, int levels) {
 
         // Move to the next level
         i--;
-     }
+    }
 }
 
 
@@ -169,3 +187,130 @@ void Display_all(t_d_list* list) {
         Display_level(list, i);
     }
 }
+
+
+////////Part 2/////////
+
+t_d_list * Level_list_P4(int n)
+{
+    int size = (long )(pow(2, n) - 1);
+
+    int *levels = (int *)malloc(size * sizeof(int));
+    for (int i = 0; i < size; i++) {
+        levels[i] = 1;
+    }
+    for (int step = 2; step <= size; step *= 2) {
+        for (int i = step - 1; i < size; i += step) {
+            levels[i] += 1;
+        }
+    }
+    t_d_list* new_list = Create_emp_list(n);
+    for(int i = 0; i<size; i++)
+    {
+        Insert_list(new_list, i+1, levels[i]);
+    }
+    free(levels);
+    return new_list;
+}
+
+
+// Search_lvl_0
+// param : t_d_list list, int value
+// output : int
+int Search_lvl_0(t_d_list list, int value)
+{
+    t_d_cell* temp = list.head[0];
+    int place = 1;
+
+    while (temp != NULL && temp->value != value) {
+        temp = temp->next[0];
+        place++;
+    }
+
+    if (temp != NULL && temp->value == value) {
+//        printf("Value %d found at level 0, position %d\n", value, place);
+        return place;
+    } else {
+//        printf("Value %d not found\n", value);
+        return -1;  // Returning -1 to indicate that the value was not found
+    }
+}
+
+// Search_lvl_max
+// param : t_d_list* list, int value
+// output : int
+int Search_lvl_max(t_d_list *list, int value) {
+    if (list == NULL || list->max_level <= 0)
+    {
+        return 0;
+    }
+
+    int level = list->max_level-1;
+    t_d_cell* temp = list->head[level];
+    t_d_cell* bound = temp;
+
+    while((level >= 0) && (temp->value != value))
+    {
+        if (temp->value <= value)
+        {
+            bound = temp;
+            level-= 1;
+            temp = bound ->next[level];
+        }
+        else
+        {
+            if (temp == list->head[level])
+            {
+                level-=1;
+                bound = list->head[level];
+                temp = bound ;
+            }
+            else
+            {
+                temp = bound ;
+                level-=1;
+                temp = temp->next[level];
+            }
+        }
+    }
+    if(level >= 0)
+    {
+        return 1;
+    }
+    return 0;
+}
+
+//int Search_lvl_max(t_d_list *list, int value)
+//{
+//    if (list == NULL || list->max_level <= 0)
+//    {
+//        printf("Valeur non trouvee\n");
+//        return 0;
+//    }
+//    int level = list->max_level-1;
+//    t_d_cell* curseur = list->head[level];
+//    t_d_cell* pmin = list->head[level];
+//    while((level >= 0) && (curseur->value != value)){
+//        if (curseur->value > value){
+//            if (curseur == list->head[level]){
+//                level--;
+//                pmin  = list->head[level];
+//                curseur= pmin ;
+//            }
+//            else{
+//                curseur = pmin ;
+//                level--;
+//                curseur = curseur->next[level];
+//            }
+//        }
+//        else{
+//            pmin  = curseur;
+//            level--;
+//            curseur = pmin ->next[level];
+//        }
+//    }
+//    if(level >= 0){
+//        return 1;
+//    }
+//    return 0;
+//}

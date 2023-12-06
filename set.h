@@ -9,6 +9,7 @@
 typedef struct s_d_cell {
     int value;
     struct s_d_cell** next;
+    struct s_d_cell** prec;
 } t_d_cell;
 
 typedef struct s_d_list {
@@ -56,5 +57,18 @@ void Insert_list(t_d_list* list, int value, int levels) ;
 // output : void
 void Display_all(t_d_list* list);
 
+
+/////Part 2//////
+t_d_list * Level_list_P4(int n);
+
+// Search_lvl_0
+// param : t_d_list list, int value
+// output : int
+int Search_lvl_0(t_d_list list, int value);
+
+// Search_lvl_max
+// param : t_d_list* list, int value, int bound
+// output : int
+int Search_lvl_max(t_d_list* list, int value);
 
 #endif //TEST_PROJET_SET_H
