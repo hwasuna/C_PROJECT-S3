@@ -12,6 +12,7 @@ typedef struct s_d_cell {
     struct s_d_cell** prec;
 } t_d_cell;
 
+
 typedef struct s_d_list {
     t_d_cell** head;
     int max_level;

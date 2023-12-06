@@ -19,7 +19,7 @@ int main() {
 
 
 
-    FILE *log_file = fopen("C:\\Users\\tideu\\Documents\\travail\\Efrei_annee_1\\Data_structure\\test_projet\\log.txt", "w");
+    FILE *log_file = fopen("C:\\Users\\tideu\\Documents\\travail\\Efrei_annee_1\\Data_structure\\log.txt", "w");
     char format[] = "%d\t%s\t%s\n";
     int level;
     char *time_lvl0;
