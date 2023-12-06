@@ -31,7 +31,6 @@ t_d_cell* Create_cell (int value, int level);
 // output : t_d_list
 t_d_list* Create_emp_list(int maxLevel);
 
-
 //Insert_Head
 // param : t_d_list* list, int level, int  value
 // output : void

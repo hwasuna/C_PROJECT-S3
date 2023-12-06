@@ -314,4 +314,3 @@ int Search_lvl_max(t_d_list *list, int value) {
 //    }
 //    return 0;
 //}
-
