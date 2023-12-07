@@ -34,6 +34,7 @@ int main() {
     char *time_lvl0;
     char *time_all_levels;
 
+
 //Test of the search functions at level max and level 0
     ////////Test 100 000/////////
 

@@ -93,7 +93,6 @@ void Display_level(t_d_list* list, int level) {
 }
 
 
-
 ////// Display_align
 ////// param : t_d_list list
 ////// output : void

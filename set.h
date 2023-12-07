@@ -57,7 +57,6 @@ void Insert_list(t_d_list* list, int value, int levels) ;
 // output : void
 void Display_all(t_d_list* list);
 
-
 /////Part 2//////
 // Level_list_P3
 // param : int n
