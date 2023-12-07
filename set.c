@@ -2,17 +2,17 @@
 // Created by Hawa Ajroud on 26/10/2023.
 //
 
-
 #include "set.h"
 #include <stdio.h>
 #include "stdlib.h"
 #include <math.h>
 
 ///////level cells
-// Create_cell
-// param : int value,  int level
-// output : pointer to the cell
+// fct : Create_cell
+// param : int value, int level
+// output : pointer to cell
 t_d_cell* Create_cell(int value, int levels) {
+//    Dynamic allocation of newCell and "next" and "prec" fields
     t_d_cell* newCell = (t_d_cell*)malloc(sizeof(t_d_cell));
     newCell->value = value;
     newCell->next = (t_d_cell**)malloc(sizeof(t_d_cell*) * levels);
@@ -279,38 +279,3 @@ int Search_lvl_max(t_d_list *list, int value) {
     }
     return 0;
 }
-
-//int Search_lvl_max(t_d_list *list, int value)
-//{
-//    if (list == NULL || list->max_level <= 0)
-//    {
-//        printf("Valeur non trouvee\n");
-//        return 0;
-//    }
-//    int level = list->max_level-1;
-//    t_d_cell* curseur = list->head[level];
-//    t_d_cell* pmin = list->head[level];
-//    while((level >= 0) && (curseur->value != value)){
-//        if (curseur->value > value){
-//            if (curseur == list->head[level]){
-//                level--;
-//                pmin  = list->head[level];
-//                curseur= pmin ;
-//            }
-//            else{
-//                curseur = pmin ;
-//                level--;
-//                curseur = curseur->next[level];
-//            }
-//        }
-//        else{
-//            pmin  = curseur;
-//            level--;
-//            curseur = pmin ->next[level];
-//        }
-//    }
-//    if(level >= 0){
-//        return 1;
-//    }
-//    return 0;
-//}
