@@ -9,7 +9,6 @@
 typedef struct s_d_cell {
     int value;
     struct s_d_cell** next;
-    struct s_d_cell** prec;
 } t_d_cell;
 
 
@@ -44,7 +43,7 @@ void Display_level(t_d_list* list, int level);
 // Display_align
 // param :  t_d_list list
 // output : void
-void Display_align(t_d_list list);
+void Display_align(t_d_list* list);
 
 // Insert_list
 // param : t_d_list* list, int  level, int value
@@ -60,7 +59,10 @@ void Display_all(t_d_list* list);
 
 
 /////Part 2//////
-t_d_list * Level_list_P4(int n);
+// Level_list_P3
+// param : int n
+// output : t_d_list* list
+t_d_list * Level_list_P3(int n);
 
 // Search_lvl_0
 // param : t_d_list list, int value

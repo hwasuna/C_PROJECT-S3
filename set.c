@@ -12,24 +12,15 @@
 // param : int value, int level
 // output : pointer to cell
 t_d_cell* Create_cell(int value, int levels) {
-//    Dynamic allocation of newCell and "next" and "prec" fields
+//    Dynamic allocation of newCell and "next" field
     t_d_cell* newCell = (t_d_cell*)malloc(sizeof(t_d_cell));
     newCell->value = value;
     newCell->next = (t_d_cell**)malloc(sizeof(t_d_cell*) * levels);
-    newCell->prec = (t_d_cell**)malloc(sizeof(t_d_cell*) * levels);
 
+//    Set the different level's "next" to NULL
     for (int i = 0; i < levels; ++i)
     {
         newCell->next[i] = NULL;
-        // Set prec pointers to the previous level cells
-        if (i > 0)
-        {
-            newCell->prec[i] = newCell->prec[i - 1];
-        }
-        else
-        {
-            newCell->prec[i] = NULL;
-        }
     }
     return newCell;
 }
@@ -40,10 +31,18 @@ t_d_cell* Create_cell(int value, int levels) {
 // param : int max_level
 // output : t_d_list
 t_d_list* Create_emp_list(int maxLevel) {
+//    Check if the level asked is allowed
+    if (maxLevel<=0)
+    {
+        printf("Error with level asked. Please enter a positive value\n");
+        return NULL;
+    }
+//    Dynamic allocation for the list and it's head
     t_d_list* newList = (t_d_list*)malloc(sizeof(t_d_list));
     newList->head = (t_d_cell**)malloc(sizeof(t_d_cell*) * (maxLevel + 1));
     newList->max_level = maxLevel;
 
+//    Create the head for each level
     for (int i = 0; i < maxLevel; ++i) {
         newList->head[i] = NULL;
     }
@@ -55,20 +54,19 @@ t_d_list* Create_emp_list(int maxLevel) {
 // param : t_d_list* list, int  value, int level
 // output : void
 void Insert_Head(t_d_list* list, int value, int levels) {
+//    Create the cell to insert
     t_d_cell* newCell = Create_cell(value, levels);
 
+//    Error message
     if (newCell == NULL) {
         printf("Error creating cell. Memory allocation failed.\n");
         return;
     }
 
+//    Insert the cell at the head (no regard for the order)
     for (int i = 0; i < levels; i++) {
         newCell->next[i] = list->head[i];
         list->head[i] = newCell;
-        if (i>0)
-        {
-            newCell->prec[i] = newCell->prec[i-1];
-        }
     }
 }
 
@@ -76,14 +74,19 @@ void Insert_Head(t_d_list* list, int value, int levels) {
 // param : t_d_list list, int level
 // output : void
 void Display_level(t_d_list* list, int level) {
+//    Check if the level is right (in the bounds)
     if (level >= 0 && level < list->max_level) {
         printf("[list_head_%d @-] --> ", level);
+//        Create a temporary cell to browse the list
         t_d_cell* temp = list->head[level];
+//        Display each cell until the last
         while (temp != NULL) {
-            printf("[%d|@-] --> ", temp->value);
+            printf("[ %d|@-] --> ", temp->value);
             temp = temp->next[level];
         }
+//        Display the last cell's pointer to NULL
         printf("NULL\n");
+//        If the level asked isn't right = display an error message
     } else {
         printf("Invalid level display\n");
     }
@@ -94,54 +97,42 @@ void Display_level(t_d_list* list, int level) {
 ////// Display_align
 ////// param : t_d_list list
 ////// output : void
-//void Display_align(t_d_list list)
-//{
-//    for (int level = 0; level < list.max_level; level++) {
+//void Display_align(t_d_list* list) {
+//    for (int level = 0; level < list->max_level; level++) {
 //        printf("[list_head_%d @-] ", level);
-//        t_d_cell* temp = list.head[level];
 //
-//        // Create an array to keep track of the positions for each level
-//        int positions[level + 1];
-//
-//        for (int i = 0; i <= level; i++) {
-//            positions[i] = 0; // Initialize positions to 0
-//        }
+//        t_d_cell* temp = list->head[level];
+//        t_d_cell* tempPrev = NULL;
 //
 //        // Iterate through the elements and display them with alignment
 //        while (temp != NULL) {
-//            // Print spaces to align with the previous level
-//            for (int i = 0; i < positions[level]; i++) {
-//                printf("-------");
-//            }
-//
-//            // Print the current element and update the position
-//            printf("-->[%d|@-] ", temp->value);
-//            positions[level]++;
-//
-//            // Move to the next level and update the positions array
-//            for (int i = level - 1; i >= 0; i--) {
-//                if (temp->next == NULL || temp->next->value > list.head[i]->value) {
-//                    printf("----------");
-//                } else {
-//                    printf("--> ");
+//            // Display "------" for any missing cells before the current value
+//            if (tempPrev != NULL && tempPrev->next[level] != temp) {
+//                for (int i = 0; i < (temp->value - tempPrev->value); i++) {
+//                    printf("-------- ");
 //                }
-//                positions[i]++;
 //            }
-//            temp = temp->next;
+//
+//            // Print the current element
+//            printf("-->[%d|@-] ", temp->value);
+//
+//            tempPrev = temp;
+//            temp = temp->next[level];
 //        }
+//
 //        printf("NULL\n");
 //    }
 //}
 
 
-
 // Insert_list
-// param : t_d_list* list, int  level, int value
+// param : t_d_list* list, int value, int  level
 // output : void
-// ATTENTION TO THE ORDER OF THE INSERTION = MUST STAY A SORTED LIST
 void Insert_list(t_d_list* list, int value, int levels) {
+//    Create the new cell to insert
     t_d_cell* newCell = Create_cell(value, levels);
 
+//    Check if the creation was done correctly
     if (newCell == NULL) {
         printf("Error creating cell. Memory allocation failed.\n");
         return;
@@ -150,24 +141,26 @@ void Insert_list(t_d_list* list, int value, int levels) {
     // Start at the highest level
     int i = levels - 1;
 
+//    Repeat the iteration for every level (from starting level to the lowest level)
     while (i >= 0) {
+//        Create 2 temporary cells to browse the list
         t_d_cell* current = list->head[i];
         t_d_cell* prev = NULL;
 
-        // Find the correct position to insert the new cell at the current level
+//      Find the correct position (ascending order) to insert the new cell at the current level
         while (current != NULL && current->value < value) {
             prev = current;
             current = current->next[i];
         }
 
-        // Insert the new cell at the correct position
+        // Insert the new cell at the chosen position
         if (prev == NULL) {
-            // Insert at the beginning
+            // Insert at the head
             newCell->next[i] = list->head[i];
             list->head[i] = newCell;
 
         } else {
-            // Insert after the last cell at the level with a lower value
+            // Insert in the beggining/ end of the list
             newCell->next[i] = current;
             prev->next[i] = newCell;
         }
@@ -183,6 +176,7 @@ void Insert_list(t_d_list* list, int value, int levels) {
 // param : t_d_list list
 // output : void
 void Display_all(t_d_list* list) {
+//    For every level = display level by level
     for (int i = 0; i < list->max_level; i++) {
         Display_level(list, i);
     }
@@ -191,24 +185,35 @@ void Display_all(t_d_list* list) {
 
 ////////Part 2/////////
 
-t_d_list * Level_list_P4(int n)
+// Level_list_P3
+// param : int n
+// output : t_d_list* list
+t_d_list * Level_list_P3(int n)
 {
+//    Specify the number of cells of the list (2^n-1)
     int size = (long )(pow(2, n) - 1);
 
+//    Dynamic allocation of the levels (depends on n) with an
     int *levels = (int *)malloc(size * sizeof(int));
+
+//    Set every cell (= future level value) to 1 as a default value
     for (int i = 0; i < size; i++) {
         levels[i] = 1;
     }
+//    Increment the value of the cells depending on the given sequence
     for (int step = 2; step <= size; step *= 2) {
         for (int i = step - 1; i < size; i += step) {
             levels[i] += 1;
         }
     }
+//    Creation of the level list of level given by the precedent array
     t_d_list* new_list = Create_emp_list(n);
     for(int i = 0; i<size; i++)
     {
+//        Insert cells with the value and level size given by the array
         Insert_list(new_list, i+1, levels[i]);
     }
+//    Free the dynamic allocation of the array
     free(levels);
     return new_list;
 }
@@ -219,19 +224,21 @@ t_d_list * Level_list_P4(int n)
 // output : int
 int Search_lvl_0(t_d_list list, int value)
 {
+//    Create a temporary cell at level 0
     t_d_cell* temp = list.head[0];
+//    a place variable to keep the position of the value
     int place = 1;
 
+//    Browse the list until the end while the value is not found
     while (temp != NULL && temp->value != value) {
         temp = temp->next[0];
         place++;
     }
 
+//    If the value was  found, return the position of the cell, else -1 (an unreachable value for the list)
     if (temp != NULL && temp->value == value) {
-//        printf("Value %d found at level 0, position %d\n", value, place);
         return place;
     } else {
-//        printf("Value %d not found\n", value);
         return -1;  // Returning -1 to indicate that the value was not found
     }
 }
@@ -240,17 +247,21 @@ int Search_lvl_0(t_d_list list, int value)
 // param : t_d_list* list, int value
 // output : int
 int Search_lvl_max(t_d_list *list, int value) {
+//    Check if the list is null or has an invalid max_level
     if (list == NULL || list->max_level <= 0)
     {
         return 0;
     }
 
+//    Start the search at level max
     int level = list->max_level-1;
     t_d_cell* temp = list->head[level];
     t_d_cell* bound = temp;
 
+//    For every level (we descend from highest to lowest level) until the value is found
     while((level >= 0) && (temp->value != value))
     {
+//        if the value is higher than the current value, descend of one level and add to the bound
         if (temp->value <= value)
         {
             bound = temp;
@@ -259,6 +270,7 @@ int Search_lvl_max(t_d_list *list, int value) {
         }
         else
         {
+            // If the value is lower than the current value, move to the previous bound or head if at the beginning
             if (temp == list->head[level])
             {
                 level-=1;
@@ -273,7 +285,8 @@ int Search_lvl_max(t_d_list *list, int value) {
             }
         }
     }
-    if(level >= 0)
+    // If the level is valid, the value is found : return 1, else return 0
+    if (level >= 0)
     {
         return 1;
     }
