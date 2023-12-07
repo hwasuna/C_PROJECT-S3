@@ -11,7 +11,7 @@ typedef struct s_d_cell {
     struct s_d_cell** next;
 } t_d_cell;
 
-
+//List
 typedef struct s_d_list {
     t_d_cell** head;
     int max_level;
@@ -58,10 +58,10 @@ void Insert_list(t_d_list* list, int value, int levels) ;
 void Display_all(t_d_list* list);
 
 /////Part 2//////
-// Level_list_P3
+// Level_list_P2
 // param : int n
 // output : t_d_list* list
-t_d_list * Level_list_P3(int n);
+t_d_list * Level_list_P2(int n);
 
 // Search_lvl_0
 // param : t_d_list list, int value

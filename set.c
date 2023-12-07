@@ -97,29 +97,38 @@ void Display_level(t_d_list* list, int level) {
 ////// param : t_d_list list
 ////// output : void
 //void Display_align(t_d_list* list) {
-//    for (int level = 0; level < list->max_level; level++) {
-//        printf("[list_head_%d @-] ", level);
+//    for (int i = 0; i < list->max_level; i++) {
+//        // Print the level header
+//        printf("[list_head_%d @-]--", i);
 //
-//        t_d_cell* temp = list->head[level];
-//        t_d_cell* tempPrev = NULL;
+//        // Create a temporary cell to browse the list
+//        t_d_cell* temp = list->head[i];
 //
-//        // Iterate through the elements and display them with alignment
+//        // Display each cell until the last
 //        while (temp != NULL) {
-//            // Display "------" for any missing cells before the current value
-//            if (tempPrev != NULL && tempPrev->next[level] != temp) {
-//                for (int i = 0; i < (temp->value - tempPrev->value); i++) {
-//                    printf("-------- ");
+//            // If we are not at level 0, print the current element
+//            if (i == 0) {
+//                printf(">[ %d|@-]--", temp->value);
+//            } else {
+//                // If we are at level 0, print dashes until reaching the same value
+//                t_d_cell* temp_lvl_0 = list->head[0];
+//                while (temp_lvl_0 != NULL && temp_lvl_0->value != temp->value) {
+//                    printf("----");
+//                    temp_lvl_0 = temp_lvl_0->next[0];
+//                }
+//                if (temp_lvl_0 != NULL && temp_lvl_0->value == temp->value) {
+//                    printf(">[ %d|@-]--", temp->value);
 //                }
 //            }
 //
-//            // Print the current element
-//            printf("-->[%d|@-] ", temp->value);
+//            // Check if the current cell is the last one in the level
+//            if (temp->next[i] == NULL) {
+//                printf("--> NULL\n");
+//            }
 //
-//            tempPrev = temp;
-//            temp = temp->next[level];
+//            // Move to the next cell
+//            temp = temp->next[i];
 //        }
-//
-//        printf("NULL\n");
 //    }
 //}
 
@@ -184,10 +193,10 @@ void Display_all(t_d_list* list) {
 
 ////////Part 2/////////
 
-// Level_list_P3
+// Level_list_P2
 // param : int n
 // output : t_d_list* list
-t_d_list * Level_list_P3(int n)
+t_d_list * Level_list_P2(int n)
 {
 //    Specify the number of cells of the list (2^n-1)
     int size = (long )(pow(2, n) - 1);
