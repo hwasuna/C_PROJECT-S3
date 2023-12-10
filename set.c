@@ -7,14 +7,17 @@
 #include "stdlib.h"
 #include <math.h>
 
+
+////////Part 1/////////
+
 ///////level cells
 // fct : Create_cell
 // param : int value, int level
 // output : pointer to cell
-t_d_cell* Create_cell(int value, int levels) {
+t_d_cell* Create_cell(int val, int levels) {
 //    Dynamic allocation of newCell and "next" field
     t_d_cell* newCell = (t_d_cell*)malloc(sizeof(t_d_cell));
-    newCell->value = value;
+    newCell->value = val;
     newCell->next = (t_d_cell**)malloc(sizeof(t_d_cell*) * levels);
 
 //    Set the different level's "next" to NULL
@@ -27,7 +30,7 @@ t_d_cell* Create_cell(int value, int levels) {
 
 
 ///////level lists
-// Create_empty_lev_list
+// fct : Create_emp_list
 // param : int max_level
 // output : t_d_list
 t_d_list* Create_emp_list(int maxLevel) {
@@ -50,6 +53,8 @@ t_d_list* Create_emp_list(int maxLevel) {
     return newList;
 }
 
+///////Insert's functions
+
 //Insert_Head
 // param : t_d_list* list, int  value, int level
 // output : void
@@ -69,6 +74,53 @@ void Insert_Head(t_d_list* list, int value, int levels) {
         list->head[i] = newCell;
     }
 }
+
+// Insert_list
+// param : t_d_list* list, int value, int  level
+// output : void
+void Insert_list(t_d_list* list, int value, int levels) {
+//    Create the new cell to insert
+    t_d_cell* newCell = Create_cell(value, levels);
+
+//    Check if the creation was done correctly
+    if (newCell == NULL) {
+        printf("Error creating cell. Memory allocation failed.\n");
+        return;
+    }
+
+    // Start at the highest level
+    int i = levels - 1;
+
+//    Repeat the iteration for every level (from starting level to the lowest level)
+    while (i >= 0) {
+//        Create 2 temporary cells to browse the list
+        t_d_cell* current = list->head[i];
+        t_d_cell* prev = NULL;
+
+//      Find the correct position (ascending order) to insert the new cell at the current level
+        while (current != NULL && current->value < value) {
+            prev = current;
+            current = current->next[i];
+        }
+
+        // Insert the new cell at the chosen position
+        if (prev == NULL) {
+            // Insert at the head
+            newCell->next[i] = list->head[i];
+            list->head[i] = newCell;
+
+        } else {
+            // Insert in the beginning/ end of the list
+            newCell->next[i] = current;
+            prev->next[i] = newCell;
+        }
+
+        // Move to the next level
+        i--;
+    }
+}
+
+///////Display's functions
 
 // Display_level
 // param : t_d_list list, int level
@@ -92,6 +144,21 @@ void Display_level(t_d_list* list, int level) {
     }
 }
 
+// Display_all
+// param : t_d_list list
+// output : void
+// !!NOTE!! : we don't need it if we use the Display_aligned function
+void Display_all(t_d_list* list) {
+//    For every level = display level by level
+    for (int i = 0; i < list->max_level; i++) {
+        Display_level(list, i);
+    }
+}
+
+// list_length
+// param : int x
+// output : integer representing the length of the list
+// !!NOTE!! : we need it for the Display_aligned function
 int list_length(int x)
 {
     int sum=0;
@@ -107,11 +174,10 @@ int list_length(int x)
     return sum+(int)log10((double)x);
 }
 
-
-////// Display_align
-////// param : t_d_list list
-////// output : void
-
+// Display_aligned
+// param : t_d_list list
+// output : void
+// !!NOTE!! : need list_length function
 void Display_aligned(t_d_list *list) // Display level list function, it takes 1 parameter : the address of the level list [my_t_d_list]
 {
     if (list->max_level == 0)
@@ -168,64 +234,6 @@ void Display_aligned(t_d_list *list) // Display level list function, it takes 1 
 }
 
 
-// Insert_list
-// param : t_d_list* list, int value, int  level
-// output : void
-void Insert_list(t_d_list* list, int value, int levels) {
-//    Create the new cell to insert
-    t_d_cell* newCell = Create_cell(value, levels);
-
-//    Check if the creation was done correctly
-    if (newCell == NULL) {
-        printf("Error creating cell. Memory allocation failed.\n");
-        return;
-    }
-
-    // Start at the highest level
-    int i = levels - 1;
-
-//    Repeat the iteration for every level (from starting level to the lowest level)
-    while (i >= 0) {
-//        Create 2 temporary cells to browse the list
-        t_d_cell* current = list->head[i];
-        t_d_cell* prev = NULL;
-
-//      Find the correct position (ascending order) to insert the new cell at the current level
-        while (current != NULL && current->value < value) {
-            prev = current;
-            current = current->next[i];
-        }
-
-        // Insert the new cell at the chosen position
-        if (prev == NULL) {
-            // Insert at the head
-            newCell->next[i] = list->head[i];
-            list->head[i] = newCell;
-
-        } else {
-            // Insert in the beginning/ end of the list
-            newCell->next[i] = current;
-            prev->next[i] = newCell;
-        }
-
-        // Move to the next level
-        i--;
-    }
-}
-
-
-
-// Display_all
-// param : t_d_list list
-// output : void
-void Display_all(t_d_list* list) {
-//    For every level = display level by level
-    for (int i = 0; i < list->max_level; i++) {
-        Display_level(list, i);
-    }
-}
-
-
 ////////Part 2/////////
 
 // Level_list_P2
@@ -234,7 +242,7 @@ void Display_all(t_d_list* list) {
 t_d_list * Level_list_P2(int n)
 {
 //    Specify the number of cells of the list (2^n-1)
-    int size = (long )(pow(2, n) - 1);
+    int size = (long)(pow(2, n) - 1);
 
 //    Dynamic allocation of the levels (depends on n) with an
     int *levels = (int *)malloc(size * sizeof(int));

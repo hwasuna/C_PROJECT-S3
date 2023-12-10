@@ -21,7 +21,7 @@ typedef struct s_d_list {
 // Create_cell
 // param : int value, int level
 // output : t_d_cell*
-t_d_cell* Create_cell (int value, int level);
+t_d_cell* Create_cell (int val, int level);
 
 
 ///////level lists
