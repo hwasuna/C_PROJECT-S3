@@ -9,7 +9,8 @@
 #include "ctype.h"
 
 
-char* scanString(void) {
+char* scanString(void)
+{
     char buffer[256];
     fgets(buffer, sizeof(buffer), stdin);
     buffer[strcspn(buffer, "\n")] = '\0';
@@ -17,20 +18,16 @@ char* scanString(void) {
     return strdup(buffer);
 }
 
-Contact* Create_contact(Calendar* calendar, char* FirstName, char* LastName) {
-    if (calendar == NULL) {
+Contact* Create_contact(Calendar* calendar, char* FirstName, char* LastName)
+{
+    if (calendar == NULL)
+    {
         printf("Invalid calendar\n");
         return NULL;
     }
 
     // Allocate memory for a new contact
     Contact* newContact = (Contact*)malloc(sizeof(Contact));
-
-    // Check if memory allocation was successful
-    if (newContact == NULL) {
-        printf("Memory allocation failed\n");
-        return NULL;
-    }
 
     // Allocate memory for the first and last names
     newContact->FirstName = strdup(FirstName);
@@ -49,36 +46,34 @@ Contact* Create_contact(Calendar* calendar, char* FirstName, char* LastName) {
     return newContact;
 }
 
-Calendar* Create_Emp_Calendar(int max_level) {
-    // Allocate memory for a new Calendar structure
+Calendar* Create_Emp_Calendar(int max_level)
+{
+    // Allocate memory for a Calendar structure
     Calendar* new_calendar = malloc(sizeof(Calendar));
-
-    // Check for successful memory allocation
-    if (new_calendar == NULL) {
-        return NULL;
-    }
 
     // Allocate memory for the head array
     new_calendar->head = (Contact**)malloc(sizeof(Contact*) * (max_level + 1));
 
     // Initialize all head pointers to NULL
-    for (int i = 0; i <= max_level; i++) {
+    for (int i = 0; i <= max_level; i++)
+    {
         new_calendar->head[i] = NULL;
     }
-
-    // Set the maximum level
     new_calendar->max_level = max_level;
 
-    // Return the newly created calendar
+    // Return the created calendar
     return new_calendar;
 }
 
 
-// Function to compare two strings (case-insensitive)
-int strcasecmp_lower(const char* str1, const char* str2) {
-    while (*str1 && *str2) {
+// Function to compare two strings
+int strcasecmp_lower(const char* str1, const char* str2)
+{
+    while (*str1 && *str2)
+    {
         int diff = tolower((unsigned char)*str1) - tolower((unsigned char)*str2);
-        if (diff) {
+        if (diff)
+        {
             return diff;
         }
         ++str1;
@@ -87,10 +82,12 @@ int strcasecmp_lower(const char* str1, const char* str2) {
     return tolower((unsigned char)*str1) - tolower((unsigned char)*str2);
 }
 
+//Insert the contact in the list (supposed to be alphabetic but doesn't work)
 void InsertSorted(Calendar* calendar, Contact* newContact)
 {
     // Check for empty calendar or invalid contact
-    if (calendar == NULL || newContact == NULL) {
+    if (calendar == NULL || newContact == NULL)
+    {
         printf("Invalid calendar or contact\n");
         return;
     }
@@ -101,9 +98,11 @@ void InsertSorted(Calendar* calendar, Contact* newContact)
     Contact* previous = NULL;
 
     // Traverse the levels until the correct position is found
-    while (level >= 0) {
+    while (level >= 0)
+    {
         // Check if the current level is empty or if the new contact should be inserted
-        if (currentHead == NULL || strcasecmp_lower(currentHead->LastName, newContact->LastName) >= 0) {
+        if (currentHead == NULL || strcasecmp_lower(currentHead->LastName, newContact->LastName) >= 0)
+        {
             break;
         }
 
@@ -117,12 +116,15 @@ void InsertSorted(Calendar* calendar, Contact* newContact)
     Contact* insertedContact = malloc(sizeof(Contact));
     memcpy(insertedContact, newContact, sizeof(Contact));
 
-    // Insert the contact at the found position
-    if (previous == NULL) {
+    // Insert the contact at the position
+    if (previous == NULL)
+    {
         // Insert at the beginning of the list
         insertedContact->next = calendar->head[level];
         calendar->head[level] = insertedContact;
-    } else {
+    }
+    else
+    {
         // Insert after the previous node
         insertedContact->next = currentHead;
         previous->next = insertedContact;
@@ -130,9 +132,12 @@ void InsertSorted(Calendar* calendar, Contact* newContact)
 
 }
 
-void createAppointment(Contact* contact, Date date, Time startTime, Time endTime, char* purpose) {
+//Create an appointment to a given contact
+void createAppointment(Contact* contact, Date date, Time startTime, Time endTime, char* purpose)
+{
     // Check if the contact is valid
-    if (contact == NULL) {
+    if (contact == NULL)
+    {
         printf("Invalid contact\n");
         return;
     }
@@ -141,7 +146,8 @@ void createAppointment(Contact* contact, Date date, Time startTime, Time endTime
     Appointment* newAppointment = (Appointment*)malloc(sizeof(Appointment));
 
     // Check if memory allocation was successful
-    if (newAppointment == NULL) {
+    if (newAppointment == NULL)
+    {
         printf("Memory allocation failed for new appointment\n");
         return;
     }
@@ -155,7 +161,8 @@ void createAppointment(Contact* contact, Date date, Time startTime, Time endTime
     newAppointment->purpose = strdup(purpose);
 
     // Check if memory allocation was successful for the purpose
-    if (newAppointment->purpose == NULL) {
+    if (newAppointment->purpose == NULL)
+    {
         printf("Memory allocation failed for purpose\n");
         free(newAppointment);  // Free the allocated memory for the appointment
         return;
@@ -166,8 +173,10 @@ void createAppointment(Contact* contact, Date date, Time startTime, Time endTime
     contact->appointments = newAppointment;
 }
 
-void displayAppointments(Calendar* calendar, Contact* contact) {
-    if (calendar == NULL || contact == NULL) {
+void displayAppointments(Calendar* calendar, Contact* contact)
+{
+    if (calendar == NULL || contact == NULL)
+    {
         printf("Invalid calendar or contact\n");
         return;
     }
@@ -178,8 +187,7 @@ void displayAppointments(Calendar* calendar, Contact* contact) {
     Appointment* currentAppointment = contact->appointments;
     while (currentAppointment != NULL) {
         printf("Date: %02d/%02d/%04d\n", currentAppointment->date.day, currentAppointment->date.month, currentAppointment->date.year);
-        printf("Time: %02d:%02d - %02d:%02d\n", currentAppointment->startTime.hour, currentAppointment->startTime.minute,
-               currentAppointment->endTime.hour, currentAppointment->endTime.minute);
+        printf("Time: %02d:%02d - %02d:%02d\n", currentAppointment->startTime.hour, currentAppointment->startTime.minute,currentAppointment->endTime.hour, currentAppointment->endTime.minute);
         printf("Purpose: %s\n", currentAppointment->purpose);
         printf("\n");
 
@@ -188,34 +196,35 @@ void displayAppointments(Calendar* calendar, Contact* contact) {
     }
 }
 
-Contact* Search_Contact(Calendar* calendar, char* Fname, char* Lname) {
+Contact* Search_Contact(Calendar* calendar, char* Fname, char* Lname)
+{
     // Check for invalid calendar or names
-    if (calendar == NULL || Fname == NULL || Lname == NULL) {
+    if (calendar == NULL || Fname == NULL || Lname == NULL)
+    {
         printf("Invalid calendar or names\n");
         return NULL;
     }
 
-    // Start at the highest level
     int level = 3;
     Contact* contact = calendar->head[level];
 
-    // Traverse the levels until the correct position is found
-    while (level >= 0) {
-        // Check if the current level is empty or if the contact is found
+    // Iterate through the levels until the correct position is found
+    while (level >= 0)
+    {
+        // Check if the current level is empty or if contact is found
         while (contact != NULL) {
-            if (strcasecmp_lower(contact->LastName, Lname) == 0 &&
-                strcasecmp_lower(contact->FirstName, Fname) == 0) {
+            if (strcasecmp_lower(contact->LastName, Lname) == 0 && strcasecmp_lower(contact->FirstName, Fname) == 0)
+            {
                 // Contact found, return the contact
-                printf("Contact %s %s present in the calendar\n\n"
-                       "", contact->FirstName, contact->LastName);
+                printf("Contact %s %s present in the calendar\n\n", contact->FirstName, contact->LastName);
                 return contact;
             }
             contact = contact->next;
         }
 
-        // Move to the next level
         --level;
-        if (level >= 0) {
+        if (level >= 0)
+        {
             contact = calendar->head[level];
         }
     }
