@@ -8,6 +8,7 @@
 #include <string.h>
 #include "ctype.h"
 
+
 Contact* Create_contact(Calendar* calendar, char* FirstName, char* LastName)
 {
     if (calendar == NULL)
