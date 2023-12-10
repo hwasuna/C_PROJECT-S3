@@ -6,80 +6,341 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "ctype.h"
+
 
 char* scanString(void) {
     char buffer[256];
     fgets(buffer, sizeof(buffer), stdin);
-    buffer[strcspn(buffer, "\n")] = '\0'; // Remove trailing newline character
+    buffer[strcspn(buffer, "\n")] = '\0';
 
     return strdup(buffer);
 }
 
-
-
-contact* Create_contact(char* FirstName, char* LastName)
-{
-    contact* newContact = (contact*)malloc(sizeof(contact));
-
-    if (newContact != NULL) {
-        newContact->FirstName = strdup(FirstName);
-        newContact->LastName = strdup(LastName);
-
-//        // Check for allocation errors
-//        if (newContact->FirstName == NULL || newContact->LastName == NULL) {
-//            free(newContact->FirstName);
-//            free(newContact->LastName);
-//            free(newContact);
-//            return NULL;
-//        }
+Contact* Create_contact(Calendar* calendar, char* FirstName, char* LastName) {
+    if (calendar == NULL) {
+        printf("Invalid calendar\n");
+        return NULL;
     }
 
+    // Allocate memory for a new contact
+    Contact* newContact = (Contact*)malloc(sizeof(Contact));
+
+    // Check if memory allocation was successful
+    if (newContact == NULL) {
+        printf("Memory allocation failed\n");
+        return NULL;
+    }
+
+    // Allocate memory for the first and last names
+    newContact->FirstName = strdup(FirstName);
+    newContact->LastName = strdup(LastName);
+
+    // Initialize other fields
+    newContact->appointments = NULL;
+    newContact->next = NULL;
+
+    // Insert the new contact into the calendar
+    InsertSorted(calendar, newContact);
+
+    printf("Contact created and added to the calendar\n");
+
+    // Return the created contact
     return newContact;
 }
-appointment* Create_Appointment(int day,int month,int year,int hour_begin,int minute_begin,int hour_end,int minute_end,char* purpose)
-{
-    appointment* newAppointment = (appointment*)malloc(sizeof(appointment));
 
-    if (newAppointment != NULL) {
-        newAppointment->day = day;
-        newAppointment->month = month;
-        newAppointment->year = year;
-        newAppointment->hour_begin = hour_begin;
-        newAppointment->minute_begin = minute_begin;
-        newAppointment->hour_end = hour_end;
-        newAppointment->minute_end = minute_end;
-        newAppointment->purpose = strdup(purpose);
-//
-//        // Check for allocation errors
-//        if (newAppointment->purpose == NULL) {
-//            free(newAppointment->purpose);
-//            free(newAppointment);
-//            return NULL;
-//        }
+Calendar* Create_Emp_Calendar(int max_level) {
+    // Allocate memory for a new Calendar structure
+    Calendar* new_calendar = malloc(sizeof(Calendar));
+
+    // Check for successful memory allocation
+    if (new_calendar == NULL) {
+        return NULL;
     }
 
-    return newAppointment;
-}
+    // Allocate memory for the head array
+    new_calendar->head = (Contact**)malloc(sizeof(Contact*) * (max_level + 1));
 
-Calendar_entry* Create_CalendarEntry(contact contact, appointment appointment)
-{
-    Calendar_entry* newEntry = (Calendar_entry*)malloc(sizeof(Calendar_entry));
-
-    if (newEntry != NULL) {
-        newEntry->contact = contact;
-        newEntry->appointment = appointment;
-        newEntry->next = NULL;
+    // Initialize all head pointers to NULL
+    for (int i = 0; i <= max_level; i++) {
+        new_calendar->head[i] = NULL;
     }
 
-    return newEntry;
+    // Set the maximum level
+    new_calendar->max_level = max_level;
+
+    // Return the newly created calendar
+    return new_calendar;
 }
 
-void Display_entry(Calendar_entry* entry)
+
+// Function to compare two strings (case-insensitive)
+int strcasecmp_lower(const char* str1, const char* str2) {
+    while (*str1 && *str2) {
+        int diff = tolower((unsigned char)*str1) - tolower((unsigned char)*str2);
+        if (diff) {
+            return diff;
+        }
+        ++str1;
+        ++str2;
+    }
+    return tolower((unsigned char)*str1) - tolower((unsigned char)*str2);
+}
+
+void InsertSorted(Calendar* calendar, Contact* newContact)
 {
-    printf("Contact: %s %s\n", entry->contact.FirstName, entry->contact.LastName);
-    printf("Appointment Date: %d-%02d-%02d\n", entry->appointment.year, entry->appointment.month, entry->appointment.day);
-    printf("Appointment Time: %02d:%02d - %02d:%02d\n", entry->appointment.hour_begin, entry->appointment.minute_begin,
-           entry->appointment.hour_end, entry->appointment.minute_end);
-    printf("Purpose: %s\n", entry->appointment.purpose);
+    // Check for empty calendar or invalid contact
+    if (calendar == NULL || newContact == NULL) {
+        printf("Invalid calendar or contact\n");
+        return;
+    }
+
+    // Find the appropriate level for insertion
+    int level = 3;
+    Contact* currentHead = calendar->head[level];
+    Contact* previous = NULL;
+
+    // Traverse the levels until the correct position is found
+    while (level >= 0) {
+        // Check if the current level is empty or if the new contact should be inserted
+        if (currentHead == NULL || strcasecmp_lower(currentHead->LastName, newContact->LastName) >= 0) {
+            break;
+        }
+
+        // Move to the next node in the current level
+        previous = currentHead;
+        currentHead = currentHead->next;
+        level--;
+    }
+
+    // Create a copy of the new contact
+    Contact* insertedContact = malloc(sizeof(Contact));
+    memcpy(insertedContact, newContact, sizeof(Contact));
+
+    // Insert the contact at the found position
+    if (previous == NULL) {
+        // Insert at the beginning of the list
+        insertedContact->next = calendar->head[level];
+        calendar->head[level] = insertedContact;
+    } else {
+        // Insert after the previous node
+        insertedContact->next = currentHead;
+        previous->next = insertedContact;
+    }
+
 }
 
+void createAppointment(Contact* contact, Date date, Time startTime, Time endTime, char* purpose) {
+    // Check if the contact is valid
+    if (contact == NULL) {
+        printf("Invalid contact\n");
+        return;
+    }
+
+    // Create a new appointment
+    Appointment* newAppointment = (Appointment*)malloc(sizeof(Appointment));
+
+    // Check if memory allocation was successful
+    if (newAppointment == NULL) {
+        printf("Memory allocation failed for new appointment\n");
+        return;
+    }
+
+    // Set the values for the new appointment
+    newAppointment->date = date;
+    newAppointment->startTime = startTime;
+    newAppointment->endTime = endTime;
+
+    // Allocate memory for the purpose and copy the string
+    newAppointment->purpose = strdup(purpose);
+
+    // Check if memory allocation was successful for the purpose
+    if (newAppointment->purpose == NULL) {
+        printf("Memory allocation failed for purpose\n");
+        free(newAppointment);  // Free the allocated memory for the appointment
+        return;
+    }
+
+    // Link the new appointment to the contact's list of appointments
+    newAppointment->next = contact->appointments;
+    contact->appointments = newAppointment;
+}
+
+void displayAppointments(Calendar* calendar, Contact* contact) {
+    if (calendar == NULL || contact == NULL) {
+        printf("Invalid calendar or contact\n");
+        return;
+    }
+
+    printf("Appointments for %s %s:\n", contact->FirstName, contact->LastName);
+
+    // Iterate through the linked list of appointments for the contact
+    Appointment* currentAppointment = contact->appointments;
+    while (currentAppointment != NULL) {
+        printf("Date: %02d/%02d/%04d\n", currentAppointment->date.day, currentAppointment->date.month, currentAppointment->date.year);
+        printf("Time: %02d:%02d - %02d:%02d\n", currentAppointment->startTime.hour, currentAppointment->startTime.minute,
+               currentAppointment->endTime.hour, currentAppointment->endTime.minute);
+        printf("Purpose: %s\n", currentAppointment->purpose);
+        printf("\n");
+
+        // Move to the next appointment
+        currentAppointment = currentAppointment->next;
+    }
+}
+
+Contact* Search_Contact(Calendar* calendar, char* Fname, char* Lname) {
+    // Check for invalid calendar or names
+    if (calendar == NULL || Fname == NULL || Lname == NULL) {
+        printf("Invalid calendar or names\n");
+        return NULL;
+    }
+
+    // Start at the highest level
+    int level = 3;
+    Contact* contact = calendar->head[level];
+
+    // Traverse the levels until the correct position is found
+    while (level >= 0) {
+        // Check if the current level is empty or if the contact is found
+        while (contact != NULL) {
+            if (strcasecmp_lower(contact->LastName, Lname) == 0 &&
+                strcasecmp_lower(contact->FirstName, Fname) == 0) {
+                // Contact found, return the contact
+                printf("Contact %s %s present in the calendar\n\n"
+                       "", contact->FirstName, contact->LastName);
+                return contact;
+            }
+            contact = contact->next;
+        }
+
+        // Move to the next level
+        --level;
+        if (level >= 0) {
+            contact = calendar->head[level];
+        }
+    }
+
+    // Contact not found
+    printf("Contact not found\n");
+    return NULL;
+}
+
+void Menu() {
+    int val = 0;
+    Calendar* calendar = Create_Emp_Calendar(4);
+
+    while (val != 9) {
+        printf("Type the number associated with the wanted action\n");
+        printf("1. Search for a contact\n");
+        printf("2. View a contact's appointments\n");
+        printf("3. Create a contact\n");
+        printf("4. Create an appointment for a contact\n");
+        printf("5. Delete an appointment (not available)\n");
+        printf("6. Save the file of all appointments (not available)\n");
+        printf("7. Loading an appointment file (not available)\n");
+        printf("8. Provide the calculation times for inserting a new contact (not available)\n");
+        printf("9. Stop the execution\n");
+
+        scanf("%d", &val);
+
+        switch (val) {
+            case 1: {
+                char *Fname = (char *) malloc(50 * sizeof(char));
+                char *Lname = (char *) malloc(50 * sizeof(char));
+                printf("Enter the Firstname\n");
+                scanf("%s", Fname);
+                printf("Enter the Lastname\n ");
+                scanf("%s", Lname);
+                Search_Contact(calendar, Fname, Lname);
+
+                break;
+            }
+            case 2: {
+                char *Fname = (char *) malloc(50 * sizeof(char));
+                char *Lname = (char *) malloc(50 * sizeof(char));
+                printf("Enter the Firstname\n");
+                scanf("%s", Fname);
+                printf("Enter the Lastname\n ");
+                scanf("%s", Lname);
+                Contact* existingContact = Search_Contact(calendar, Fname, Lname);
+
+
+                displayAppointments(calendar, existingContact);
+                break;
+            }
+            case 3: {
+                char *Fname = (char *) malloc(50 * sizeof(char));
+                char *Lname = (char *) malloc(50 * sizeof(char));
+                printf("Enter the Firstname\n");
+                scanf("%s", Fname);
+                printf("Enter the Lastname\n ");
+                scanf("%s", Lname);
+
+                Create_contact(calendar, Fname, Lname);
+
+                free(Fname);
+                free(Lname);
+                break;
+            }
+            case 4: {
+                char *Fname = (char *) malloc(50 * sizeof(char));
+                char *Lname = (char *) malloc(50 * sizeof(char));
+                printf("Enter the First and Last name\n");
+                scanf("%s %s", Fname, Lname);
+
+                Contact* existingContact = Search_Contact(calendar, Fname, Lname);
+
+                if (existingContact == NULL) {
+                    // Contact doesn't exist, create a new one
+                    Create_contact(calendar, Fname, Lname);
+                }
+
+                printf("\nDate of the appointment (dd mm yyyy): ");
+                Date appointmentDate;
+                scanf("%d %d %d", &appointmentDate.day, &appointmentDate.month, &appointmentDate.year);
+
+                printf("Start time of the appointment (hh mm): ");
+                Time startTime;
+                scanf("%d %d", &startTime.hour, &startTime.minute);
+
+                printf("End time of the appointment (hh mm): ");
+                Time endTime;
+                scanf("%d %d", &endTime.hour, &endTime.minute);
+
+                char purpose[100];
+                printf("Purpose of the appointment: ");
+                scanf("%s", purpose);
+
+                // Create an appointment for the existing or newly created contact
+                createAppointment(existingContact,appointmentDate, startTime, endTime, purpose);
+
+                free(Fname);
+                free(Lname);
+                break;
+            }
+            case 5: {
+                // TODO: Implement Delete_Appointment();
+                break;
+            }
+            case 6: {
+                // TODO: Implement Save_Appointments();
+                break;
+            }
+            case 7: {
+                // TODO: Implement Load_Appointments();
+                break;
+            }
+            case 8: {
+                // TODO: Implement Calculate_Insertion_Times();
+                break;
+            }
+            case 9: {
+                // Free the allocated memory for the calendar before stopping the execution
+                // Free_Calendar(calendar);
+                break;
+            }
+            default:
+                printf("Unknown command\n");
+        }
+    }
+}

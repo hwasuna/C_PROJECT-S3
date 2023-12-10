@@ -44,8 +44,6 @@ void Display_level(t_d_list* list, int level);
 // param :  t_d_list list
 // output : void
 void Display_aligned(t_d_list* list);
-int get_lenght_int(int a);
-
 
 // Insert_list
 // param : t_d_list* list, int  level, int value
@@ -58,6 +56,11 @@ void Insert_list(t_d_list* list, int value, int levels) ;
 // param : t_d_list list
 // output : void
 void Display_all(t_d_list* list);
+
+// Display_align
+// param : t_d_list list
+// output : void
+void Display_align(t_d_list *list);
 
 /////Part 2//////
 // Level_list_P2

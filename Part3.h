@@ -5,33 +5,60 @@
 #ifndef TEST_PROJET_PART3_H
 #define TEST_PROJET_PART3_H
 
-typedef struct {
-    char* FirstName;
-    char* LastName;
-}contact;
 
 typedef struct {
     int day;
     int month;
     int year;
-    int hour_begin;
-    int minute_begin;
-    int hour_end;
-    int minute_end;
+} Date;
+
+// Structure for storing time
+typedef struct {
+    int hour;
+    int minute;
+} Time;
+
+// Structure for storing appointment information
+typedef struct Appointment{
+    Date date;
+    Time startTime;
+    Time endTime;
     char* purpose;
-}appointment;
+    struct Appointment* next;
+} Appointment;
+
+typedef struct Contact{
+    char* FirstName;
+    char* LastName;
+    Appointment* appointments;
+    struct Contact** next;
+} Contact;
 
 typedef struct Calendar_entry {
-    contact contact;
-    appointment appointment;
-    struct Calendar_entry* next;
-} Calendar_entry;
+    struct Contact** head;
+    int max_level;
+} Calendar;
 
 char* scanString(void);
+//void toLowerCase(char* str);
 
-contact* Create_contact(char* FirstName, char* LastName);
-appointment* Create_Appointment(int day,int month,int year,int hour_begin,int minute_begin,int hour_end,int minute_end,char* purpose);
-Calendar_entry* Create_CalendarEntry(contact contact, appointment appointment);
-void Display_entry(Calendar_entry* entry);
+Contact* Create_contact(Calendar* calendar, char* FirstName, char* LastName);
+Calendar* Create_Emp_Calendar(int max_level);
+void createAppointment(Contact* contact, Date date, Time startTime, Time endTime, char* purpose);
+void displayAppointments(Calendar* calendar, Contact* contact);
+//Calendar* Fill_Calendar(int, int);
+void InsertSorted(Calendar* calendar, Contact* newContact);
+//void Add_Contact(Calendar*, Calendar_cell* );
+//Calendar_cell* create_calendar_cell(Contact contact, Appointment* appointment);
+Contact* Search_Contact(Calendar* calendar, char* Fname, char* Lname);
+//void Print_Calendar(Calendar* calendar);
+
+
+
+void Menu();
+//Calendar_entry* InsertSorted(Calendar_entry* head, Calendar_entry* newEntry);
+//Contact* Create_contact(char* FirstName, char* LastName);
+//Appointment* createAppointment(Contact* contact,Date date, Time startTime, Time endTime, char* purpose);
+//void Display_entry(Calendar_entry* entry);
 
 #endif //TEST_PROJET_PART3_H

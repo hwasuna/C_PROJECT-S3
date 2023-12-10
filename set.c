@@ -93,44 +93,6 @@ void Display_level(t_d_list* list, int level) {
 }
 
 
-////// Display_align
-////// param : t_d_list list
-////// output : void
-//void Display_align(t_d_list* list) {
-//    for (int i = 0; i < list->max_level; i++) {
-//        // Print the level header
-//        printf("[list_head_%d @-]--", i);
-//
-//        // Create a temporary cell to browse the list
-//        t_d_cell* temp = list->head[i];
-//
-//        // Display each cell until the last
-//        while (temp != NULL) {
-//            // If we are not at level 0, print the current element
-//            if (i == 0) {
-//                printf(">[ %d|@-]--", temp->value);
-//            } else {
-//                // If we are at level 0, print dashes until reaching the same value
-//                t_d_cell* temp_lvl_0 = list->head[0];
-//                while (temp_lvl_0 != NULL && temp_lvl_0->value != temp->value) {
-//                    printf("----");
-//                    temp_lvl_0 = temp_lvl_0->next[0];
-//                }
-//                if (temp_lvl_0 != NULL && temp_lvl_0->value == temp->value) {
-//                    printf(">[ %d|@-]--", temp->value);
-//                }
-//            }
-//
-//            // Check if the current cell is the last one in the level
-//            if (temp->next[i] == NULL) {
-//                printf("--> NULL\n");
-//            }
-//
-//            // Move to the next cell
-//            temp = temp->next[i];
-//        }
-//    }
-//}
 int get_lenght_int(int a)
 {
     int add=0;
@@ -146,7 +108,10 @@ int get_lenght_int(int a)
     return add+(int)log10((double )a);
 }
 
-void Display_aligned(t_d_list *list) // Display level list function, it takes 1 parameter : the address of the level list [my_t_d_list]
+////// Display_align
+////// param : t_d_list list
+////// output : void
+void Display_align(t_d_list *list) // Display level list function, it takes 1 parameter : the address of the level list [my_t_d_list]
 {
     if (list->max_level == 0) // Check if the level list is not created ?
     {
