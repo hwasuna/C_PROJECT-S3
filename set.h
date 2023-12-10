@@ -43,7 +43,9 @@ void Display_level(t_d_list* list, int level);
 // Display_align
 // param :  t_d_list list
 // output : void
-void Display_align(t_d_list* list);
+void Display_aligned(t_d_list* list);
+int get_lenght_int(int a);
+
 
 // Insert_list
 // param : t_d_list* list, int  level, int value

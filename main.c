@@ -21,15 +21,15 @@ int main() {
     Insert_list(list, 4, 6);
     Insert_list(list, -1, 1);
 
-    Display_align(list);
+    Display_aligned(list);
 //Test of the insertion
-    Display_all(list);
+//    Display_all(list);
 //    Display_level(list, 5);
 
 //------------Part 2-----------------
 
 ////Create the file to store the data (use absolute path)
-//    FILE *log_file = fopen("C:\\Users\\tideu\\Documents\\travail\\Efrei_annee_1\\Data_structure\\log_1.txt", "w");
+//    FILE *log_file = fopen("C:\\Users\\hw_ajrd\\Documents\\L2\\Computer Science\\Data Structure and Algorithmics 2\\Project\\C_PROJECT-S3\\log_1.txt", "w");
 //    char format[] = "%d\t%s\t%s\n";
 //    int level;
 //    char *time_lvl0;

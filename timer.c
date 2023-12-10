@@ -3,7 +3,8 @@
 //
 
 #include <stdio.h>
-#include <malloc.h>
+#include <stdlib.h>
+//#include <malloc.h>
 #include "timer.h"
 
 // start the timer
